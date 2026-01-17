@@ -35,14 +35,12 @@
             .page-break {
                 page-break-after: always;
             }
-            /* Force black text for maximum contrast on low-cost printers if needed, 
-               but here we keep the brand colors with higher contrast */
         }
         /* A4 fixed dimensions */
         .a4-container {
             width: 210mm;
             height: 297mm;
-            padding: 8mm 5mm;
+            padding: 12mm 5mm; /* Increased top/bottom padding for safer margins */
             margin: 0 auto;
             background: white;
             box-sizing: border-box;
@@ -56,9 +54,9 @@
             height: 100%;
         }
         .bill-box {
-            border: 1.5pt solid #000; /* Use pt for print precision */
+            border: 1.5pt solid #000;
             background: white;
-            height: 92mm;
+            height: 88mm; /* Reduced from 92mm to fit 3 rows perfectly (88*3 + 8 gap = 272mm < 297mm) */
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
@@ -68,9 +66,9 @@
 <script type="importmap">
 {
   "imports": {
-    "react": "https://esm.sh/react@^19.2.3",
     "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-    "react/": "https://esm.sh/react@^19.2.3/"
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3"
   }
 }
 </script>

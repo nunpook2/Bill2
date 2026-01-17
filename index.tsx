@@ -29,6 +29,10 @@ const PrinterIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6"/><rect x="6" y="14" width="12" height="8" rx="1"/></svg>
 );
 
+const ArrowRightIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+);
+
 // --- Sub-components ---
 const BillDineIn: React.FC<{ tableNumber: number }> = ({ tableNumber }) => (
   <div className="bill-box border-[1.5pt] border-blue-900 bg-white rounded-lg relative overflow-hidden shadow-sm flex flex-col h-full">
@@ -44,7 +48,7 @@ const BillDineIn: React.FC<{ tableNumber: number }> = ({ tableNumber }) => (
     </div>
     <div className="flex-grow flex flex-col px-3 z-10">
       {[...Array(8)].map((_, i) => (
-        <div key={i} className="border-b border-dotted border-blue-300 h-[30px]"></div>
+        <div key={i} className="border-b border-dotted border-blue-300 h-[26px]"></div>
       ))}
     </div>
     <div className="mt-auto pt-1 border-t-[1.2pt] border-blue-200 flex justify-between items-end p-3 z-10 bg-white">
@@ -69,7 +73,7 @@ const BillTakeaway: React.FC<{ billNumber: string }> = ({ billNumber }) => (
         </div>
         <div className="text-right">
           <div className="text-[10px] text-red-600 font-black uppercase leading-none tracking-tighter">QUEUE NO.</div>
-          <div className="text-[34px] font-black text-red-800 leading-none">#{billNumber}</div>
+          <div className="text-[32px] font-black text-red-800 leading-none tracking-tight">#{billNumber}</div>
         </div>
       </div>
       <div className="absolute bottom-1 w-full text-center left-0">
@@ -82,11 +86,11 @@ const BillTakeaway: React.FC<{ billNumber: string }> = ({ billNumber }) => (
         <span className="text-[12px] font-extrabold text-red-950 flex items-center gap-1.5 uppercase">
           <span className="w-2.5 h-2.5 bg-red-700 rounded-full shadow-sm"></span> ใบสั่ง (กลับบ้าน)
         </span>
-        <span className="text-[22px] font-black text-red-800">คิว: #{billNumber}</span>
+        <span className="text-[20px] font-black text-red-800">คิว: #{billNumber}</span>
       </div>
       <div className="flex-grow flex flex-col">
         {[...Array(7)].map((_, i) => (
-          <div key={i} className="border-b border-dotted border-red-200 h-[24px]"></div>
+          <div key={i} className="border-b border-dotted border-red-200 h-[22px]"></div>
         ))}
       </div>
       <div className="mt-auto flex justify-between items-end border-t-[1pt] border-red-100 pt-2">
@@ -102,11 +106,11 @@ const BillTakeaway: React.FC<{ billNumber: string }> = ({ billNumber }) => (
 // --- Main App ---
 const App: React.FC = () => {
   const [config, setConfig] = useState<BillConfig>({
-    type: BillType.TAKEAWAY, // Start with Takeaway since it's the focus of the 120 queue
+    type: BillType.TAKEAWAY,
     startTable: 1,
     totalTables: 10,
     startBillNumber: 1,
-    count: 120, // Default to 120 bills (20 pages)
+    count: 120,
   });
 
   const bills = useMemo(() => {
@@ -132,6 +136,16 @@ const App: React.FC = () => {
     }
     return p;
   }, [bills]);
+
+  const handleNextBatch = () => {
+    setConfig(prev => ({
+      ...prev,
+      startBillNumber: prev.startBillNumber + prev.count
+    }));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const endBillNumber = config.startBillNumber + config.count - 1;
 
   return (
     <div className="min-h-screen">
@@ -185,19 +199,37 @@ const App: React.FC = () => {
         </div>
 
         {config.type === BillType.TAKEAWAY && (
-          <div className="max-w-6xl mx-auto mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
-            <div className="flex items-center gap-3 bg-red-50 px-4 py-2 rounded-lg border border-red-100">
-              <label className="text-[11px] font-black text-red-900 uppercase">เริ่มเลขคิวที่:</label>
-              <input
-                type="number"
-                value={config.startBillNumber}
-                onChange={(e) => setConfig({ ...config, startBillNumber: parseInt(e.target.value) || 1 })}
-                className="w-20 border-b-2 border-red-200 bg-transparent focus:outline-none focus:border-red-600 text-lg font-black text-red-800 text-center"
-              />
+          <div className="max-w-6xl mx-auto mt-4 pt-4 border-t border-gray-100 flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-6">
+                <div className="flex items-center gap-3 bg-red-50 px-4 py-2 rounded-lg border border-red-100">
+                <label className="text-[11px] font-black text-red-900 uppercase">เริ่มเลขคิวที่:</label>
+                <input
+                    type="number"
+                    value={config.startBillNumber}
+                    onChange={(e) => setConfig({ ...config, startBillNumber: parseInt(e.target.value) || 1 })}
+                    className="w-24 border-b-2 border-red-200 bg-transparent focus:outline-none focus:border-red-600 text-xl font-black text-red-800 text-center"
+                />
+                </div>
+                <div className="text-gray-600 font-bold text-sm">
+                    ถึง <span className="text-red-700 font-black text-lg">{endBillNumber}</span>
+                </div>
             </div>
-            <p className="text-[12px] text-red-600 font-extrabold bg-red-50/50 px-3 py-1 rounded-md">
-              * ปัจจุบันตั้งค่าไว้ 120 คิว ({pages.length} หน้า)
-            </p>
+
+            <div className="flex items-center gap-4">
+                <p className="text-[12px] text-red-400 font-bold hidden md:block">
+                  ({pages.length} หน้า)
+                </p>
+                <button 
+                    onClick={handleNextBatch}
+                    className="flex items-center gap-2 px-5 py-2 bg-white border-2 border-red-100 text-red-700 hover:bg-red-50 hover:border-red-200 rounded-lg font-extrabold transition-all active:scale-95 shadow-sm"
+                >
+                    <span>ชุดถัดไป</span>
+                    <span className="text-[10px] bg-red-100 px-1.5 py-0.5 rounded text-red-800">
+                        {endBillNumber + 1} - {endBillNumber + config.count}
+                    </span>
+                    <ArrowRightIcon />
+                </button>
+            </div>
           </div>
         )}
       </header>
