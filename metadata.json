@@ -1,0 +1,5 @@
+{
+  "name": "Ying Rueng Pad Thai Bill Generator",
+  "description": "A high-quality blank food bill generator for 'Ying Rueng Ancient Pad Thai', supporting Dine-in (10 tables) and Takeaway formats with automated A4 layout (6 bills per page).",
+  "requestFramePermissions": []
+}
